@@ -1,6 +1,32 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::collections::HashMap;
+use std::cmp::max;
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+  pub val: i32,
+  pub left: Option<Rc<RefCell<TreeNode>>>,
+  pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+fn build_bst(array: &Vec<Option<i32>>, index: usize) -> Option<Rc<RefCell<TreeNode>>> {
+    if index <= array.len() - 1 {
+        let next_left_child_index = (index*2) + 1;
+        let next_right_child_index = (index*2) + 2;
+        if let Some(value) = array[index] {
+            Some(Rc::new(RefCell::new(TreeNode {
+                val: value,
+                left: build_bst(&array, next_left_child_index),
+                right: build_bst(&array, next_right_child_index),
+            })))
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
 
 fn fibonacci(n: i32) -> i32 {
     let mut cache: Rc<RefCell<Vec<i32>>> = Rc::new(RefCell::new(vec![0, 1]));
@@ -38,9 +64,34 @@ fn climb_stairs(n: i32) -> i32 {
     recurse(0, n, Rc::clone(&cache))
 }
 
+fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+    if let Some(node) = root {
+        let left_height = if let Some(left_child) = node.borrow().left.as_ref() {
+            max_depth(Some(Rc::clone(left_child)))
+        } else {0};
+        let right_height = if let Some(right_child) = node.borrow().right.as_ref() {
+            max_depth(Some(Rc::clone(right_child)))
+        } else {0};
+        max(left_height, right_height) + 1
+    } else {
+        0
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst};
+
+    #[test]
+    fn test_max_depth() {
+        let mut bst_values = vec![Some(3), Some(9), Some(20), None, None, Some(15) , Some(7)];
+        let mut bst = build_bst(&bst_values, 0);
+        assert_eq!(max_depth(bst), 3);
+        bst_values = vec![Some(1), Some(2), Some(3), Some(4) , Some(5)];
+        bst = build_bst(&bst_values, 0);
+        assert_eq!(max_depth(bst), 3);
+        assert_eq!(max_depth(None), 0);
+    }
     
     #[test]
     fn test_climb_stairs() {

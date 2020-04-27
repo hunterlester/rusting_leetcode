@@ -78,9 +78,40 @@ fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
     }
 }
 
+fn my_pow(x: f64, n: i32) -> f64 {
+    fn fast_pow(x: f64, n: i32) -> f64 {
+        if n == 0 {
+            return 1_f64;
+        }
+        let half = fast_pow(x, n / 2);
+        if n % 2 == 0 {
+            half * half
+        } else {
+            half * half * x
+        }
+    }
+    let mut product = fast_pow(x, n.abs());
+    if n < 0 {
+        1 as f64 / product
+    } else {
+        product as f64
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs, max_depth, build_bst};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow};
+
+    #[test]
+    fn test_pow() {
+        assert_eq!(my_pow(2 as f64, 10), 1024 as f64);
+        assert_eq!(my_pow(2 as f64, -2), 0.25);
+        assert_eq!(my_pow(2 as f64, 0), 1 as f64);
+        assert_eq!(my_pow(-2 as f64, 3), -8 as f64);
+        assert_eq!(my_pow(-2 as f64, 2), 4 as f64);
+        assert_eq!(my_pow(-2 as f64, -2), 0.25);
+        assert_eq!(my_pow(0.00001, 2147483647), 0_f64);
+    }
 
     #[test]
     fn test_max_depth() {

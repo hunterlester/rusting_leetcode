@@ -10,6 +10,21 @@ pub struct TreeNode {
   pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct ListNode {
+  pub val: i32,
+  pub next: Option<Box<ListNode>>,
+}
+
+fn build_linked_list(array: Vec<i32>, index: usize) -> Option<Box<ListNode>> {
+    if let Some(val) = array.get(index) {
+        Some(Box::new(ListNode {
+            val: *val,
+            next: build_linked_list(array, index + 1),
+        }))
+    } else { None }
+}
+
 fn build_bst(array: &Vec<Option<i32>>, index: usize) -> Option<Rc<RefCell<TreeNode>>> {
     if index <= array.len() - 1 {
         let next_left_child_index = (index*2) + 1;
@@ -98,9 +113,38 @@ fn my_pow(x: f64, n: i32) -> f64 {
     }
 }
 
+fn merge_two_lists(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    if let Some(mut node1) = l1 {
+        if let Some(mut node2) = l2 {
+            if node1.val < node2.val {
+                node1.next = merge_two_lists(node1.next, Some(node2));
+                Some(node1)
+            } else {
+                node2.next = merge_two_lists(Some(node1), node2.next);
+                Some(node2)
+            }
+        } else {
+           Some(node1) 
+        }
+    } else {
+        l2
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list};
+
+    #[test]
+    fn test_merge_two_lists() {
+        let l1_values = vec![1, 2 ,4];
+        let l2_values = vec![1, 3 ,4];
+        let l1 = build_linked_list(l1_values, 0);
+        let l2 = build_linked_list(l2_values, 0);
+        let expected_values = vec![1, 1, 2, 3, 4, 4];
+        let expected_linked_list = build_linked_list(expected_values, 0);
+        assert_eq!(merge_two_lists(l1, l2), expected_linked_list);
+    }
 
     #[test]
     fn test_pow() {

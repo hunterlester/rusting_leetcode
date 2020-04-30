@@ -131,9 +131,40 @@ fn merge_two_lists(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Opti
     }
 }
 
+/// Inefficient algorithm
+// pub fn kth_grammar(n: i32, k: i32) -> i32 {
+//     let mut rows = vec![vec![0]];
+//     for row_num in 0..n - 1 {
+//         let mut new_row = rows[row_num as usize].clone();
+//         for num in new_row.iter_mut() {
+//             if *num == 0 {
+//                 *num = 1;
+//             } else {
+//                 *num = 0;
+//             }
+//         }
+//         rows.push(vec![rows[rows.len() - 1].clone(), new_row].concat());
+//     }
+//     rows[n as usize - 1][k as usize - 1]
+// }
+
+pub fn kth_grammar(n: i32, k: i32) -> i32 {
+    let k_minus_one = k - 1;
+    (k_minus_one.count_ones() % 2) as i32
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list, kth_grammar};
+
+    #[test]
+    fn test_kth_grammar() {
+        assert_eq!(kth_grammar(1, 1), 0);
+        assert_eq!(kth_grammar(4, 5), 1);
+        assert_eq!(kth_grammar(2, 2), 1);
+        assert_eq!(kth_grammar(2, 1), 0);
+        assert_eq!(kth_grammar(1, 1), 0);
+    }
 
     #[test]
     fn test_merge_two_lists() {

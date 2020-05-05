@@ -10,6 +10,16 @@ pub struct TreeNode {
   pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
+impl TreeNode {
+    fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ListNode {
   pub val: i32,
@@ -153,9 +163,43 @@ pub fn kth_grammar(n: i32, k: i32) -> i32 {
     (k_minus_one.count_ones() % 2) as i32
 }
 
+pub fn num_trees(n: i32) -> i32 {
+    let mut combinations: Vec<i32> = vec![1, 1];
+
+    for i in 2..=n {
+        for j in 1..=i {
+            let product = combinations[j as usize - 1] * combinations[i as usize - j as usize];
+            if let Some(value) = combinations.get_mut(i as usize) {
+                *value += product;
+            } else {
+                combinations.push(product);
+            }
+        }
+    }
+    combinations[n as usize]
+}
+
+// fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+//     let mut list: Vec<Option<Rc<RefCell<TreeNode>>>> = Vec::new();
+//     list
+// }
+
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list, kth_grammar};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list, kth_grammar, num_trees};
+
+    #[test]
+    fn test_num_trees() {
+        assert_eq!(num_trees(0), 1);
+        assert_eq!(num_trees(1), 1);
+        assert_eq!(num_trees(3), 5);
+        assert_eq!(num_trees(4), 14);
+    }
+
+    // #[test]
+    // fn test_generate_trees() {
+    //     assert_eq!(generate_trees(4), vec![]);
+    // }
 
     #[test]
     fn test_kth_grammar() {

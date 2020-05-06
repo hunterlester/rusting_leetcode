@@ -163,21 +163,39 @@ pub fn kth_grammar(n: i32, k: i32) -> i32 {
     (k_minus_one.count_ones() % 2) as i32
 }
 
-// REVISIT
-pub fn num_trees(n: i32) -> i32 {
-    let mut combinations: Vec<i32> = vec![1, 1];
+/// Recursive
+// fn num_trees(n: i32) -> i32 {
+//     println!("iter");
+//     if n <= 1 {
+//         1
+//     } else {
+//         let mut sum = 0;
+//         for root in 1..=n {
+//             let left = num_trees(root - 1);
+//             let right = num_trees(n - root);
+//             sum += left * right;
+//         }
+//         sum
+//     }
+// }
 
-    for i in 2..=n {
-        for j in 1..=i {
-            let product = combinations[j as usize - 1] * combinations[i as usize - j as usize];
-            if let Some(value) = combinations.get_mut(i as usize) {
-                *value += product;
-            } else {
-                combinations.push(product);
-            }
+/// Memoized
+fn num_trees(n: i32) -> i32 {
+    let cache: Rc<RefCell<Vec<i32>>> = Rc::new(RefCell::new(vec![1, 1]));
+    fn recurse(n: i32, cache: Rc<RefCell<Vec<i32>>> ) -> i32 {
+        if let Some(value) = cache.borrow().get(n as usize) {
+            return *value;
+        } 
+        let mut sum = 0;
+        for root in 1..=n {
+            let left = recurse(root - 1, Rc::clone(&cache));
+            let right = recurse(n - root, Rc::clone(&cache));
+            sum += left * right;
         }
+        cache.borrow_mut().insert(n as usize, sum);
+        sum
     }
-    combinations[n as usize]
+    recurse(n, Rc::clone(&cache))
 }
 
 fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {

@@ -163,6 +163,7 @@ pub fn kth_grammar(n: i32, k: i32) -> i32 {
     (k_minus_one.count_ones() % 2) as i32
 }
 
+// REVISIT
 pub fn num_trees(n: i32) -> i32 {
     let mut combinations: Vec<i32> = vec![1, 1];
 
@@ -179,14 +180,47 @@ pub fn num_trees(n: i32) -> i32 {
     combinations[n as usize]
 }
 
-// fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
-//     let mut list: Vec<Option<Rc<RefCell<TreeNode>>>> = Vec::new();
-//     list
-// }
+fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+    fn recurse(start: i32, end: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+        let mut list: Vec<Option<Rc<RefCell<TreeNode>>>> = Vec::new();
+        if start > end {
+            list.push(None);
+            return list;
+        }
+
+        for i in start..=end {
+            let left_subtrees: Vec<Option<Rc<RefCell<TreeNode>>>> = recurse(start, i - 1);
+            let right_subtrees: Vec<Option<Rc<RefCell<TreeNode>>>> = recurse(i + 1, end);
+            for left in &left_subtrees {
+                for right in &right_subtrees {
+                    let left_child = if let Some(node) = left { Some(Rc::clone(&node)) } else {None};
+                    let right_child = if let Some(node) = right { Some(Rc::clone(&node)) } else {None};
+                    let mut new_tree = Some(Rc::new(RefCell::new(TreeNode {
+                        val: i,
+                        left: left_child,
+                        right: right_child,
+                    })));
+                    list.push(new_tree);
+                }
+            }
+        }
+        list
+    }
+    let mut output = recurse(1, n);
+    if output.len() == 1 && output[0] == None {
+        output.pop();
+    }
+    output
+}
 
 #[cfg(test)]
 mod tests {
-    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list, kth_grammar, num_trees};
+    use super::{fibonacci, climb_stairs, max_depth, build_bst, my_pow, merge_two_lists, build_linked_list, kth_grammar, num_trees, generate_trees};
+
+    #[test]
+    fn test_generate_trees() {
+        assert_eq!(generate_trees(0), vec![]);
+    }
 
     #[test]
     fn test_num_trees() {
@@ -195,11 +229,6 @@ mod tests {
         assert_eq!(num_trees(3), 5);
         assert_eq!(num_trees(4), 14);
     }
-
-    // #[test]
-    // fn test_generate_trees() {
-    //     assert_eq!(generate_trees(4), vec![]);
-    // }
 
     #[test]
     fn test_kth_grammar() {

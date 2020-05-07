@@ -92,9 +92,56 @@ fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
     true
 }
 
+fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
+    let mut left = 0;
+    let mut right = nums.len() - 1;
+    let mut pivot: usize = left + (right - left) / 2;
+    while left <= right {
+        pivot = left + (right - left) / 2;
+        if nums[pivot] == target {
+            return pivot as i32;
+        }
+        if target < nums[pivot] && pivot > 0 {
+            right = pivot - 1;
+        } else {
+            left = pivot + 1;
+        }
+    }
+    return -1;
+}
+
+
+fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
+    true
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{sort_array, is_valid_bst, build_bst};
+    use super::{sort_array, is_valid_bst, build_bst, search_matrix, binary_search};
+
+    #[test]
+    fn test_binary_search() {
+        let mut array = vec![1, 4, 7, 9, 12, 23, 27, 30];
+        assert_eq!(binary_search(array, 27), 6);
+        array = vec![5];
+        assert_eq!(binary_search(array, 5), 0);
+        array = vec![5];
+        assert_eq!(binary_search(array, -5), -1);
+        array = vec![-1, 0, 5];
+        assert_eq!(binary_search(array, -1), 0);
+    }
+
+    #[test]
+    fn test_search_matrix() {
+        let matrix: Vec<Vec<i32>> = vec![
+          vec![1,   4,  7, 11, 15],
+          vec![2,   5,  8, 12, 19],
+          vec![3,   6,  9, 16, 22],
+          vec![10, 13, 14, 17, 24],
+          vec![18, 21, 23, 26, 30],
+        ];
+        assert_eq!(search_matrix(matrix, 5), true);
+    }
 
     #[test]
     fn test_is_valid_bst() {

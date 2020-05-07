@@ -112,7 +112,14 @@ fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
 
 
 fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
-    true
+    for vector in matrix {
+        if target >= vector[0] && target <= vector[vector.len() - 1] {
+            if binary_search(vector, target) > -1 {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 #[cfg(test)]

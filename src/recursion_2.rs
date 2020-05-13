@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -95,9 +97,8 @@ fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
 fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
     let mut left = 0;
     let mut right = nums.len() - 1;
-    let mut pivot: usize = left + (right - left) / 2;
     while left <= right {
-        pivot = left + (right - left) / 2;
+        let pivot = left + (right - left) / 2;
         if nums[pivot] == target {
             return pivot as i32;
         }
@@ -122,9 +123,62 @@ fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
     return false;
 }
 
+fn partition(nums: &mut Vec<i32>, low: i32, high: i32) -> i32 {
+    let pivot_value = nums[high as usize];
+    let mut partition_index = low;
+    for index in low..high {
+        if nums[index as usize] < pivot_value {
+            nums.swap(index as usize, partition_index as usize);
+            partition_index += 1;
+        }
+    }
+    nums.swap(partition_index as usize, high as usize);
+    partition_index
+}
+
+/// Quick sort partition variant
+// fn partition(nums: &mut Vec<i32>, mut low: i32, mut high: i32) -> i32 {
+//     let pivot_index = (low + (high - low)) / 2; // low + high >>> 1
+//     while low <= high {
+//         while nums[low as usize] < nums[pivot_index as usize] {
+//             low += 1;
+//         }
+//         while nums[high as usize] > nums[pivot_index as usize] {
+//             high -= 1;
+//         }
+//         if low <= high {
+//             nums.swap(low as usize, high as usize);
+//             low += 1;
+//             high -= 1;
+//         }
+//     }
+//     low
+// }
+
+fn quick_sort_helper(mut nums: &mut Vec<i32>, low: i32, high: i32) {
+    if low < high {
+        let partition_index = partition(&mut nums, low, high);
+        quick_sort_helper(&mut nums, low, partition_index - 1);
+        quick_sort_helper(&mut nums, partition_index + 1, high);
+    }
+}
+
+fn quick_sort(mut nums: &mut Vec<i32>) {
+    let length = nums.len() as i32;
+    quick_sort_helper(&mut nums, 0, length - 1);
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{sort_array, is_valid_bst, build_bst, search_matrix, binary_search};
+    use super::{sort_array, is_valid_bst, build_bst, search_matrix, binary_search, quick_sort};
+
+    #[test]
+    fn test_quick_sort() {
+        let mut array = vec![3, 7, 8, 1, 4];
+        let expected = vec![1, 3, 4, 7, 8];
+        quick_sort(&mut array);
+        assert_eq!(array, expected);
+    }
 
     #[test]
     fn test_binary_search() {

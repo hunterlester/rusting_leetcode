@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -56,7 +58,7 @@ impl BSTIterator {
     
     /** @return whether we have a next smallest number */
     fn has_next(&self) -> bool {
-        if let Some(value) = self.inorder_values.get(self.current_index) {
+        if let Some(_value) = self.inorder_values.get(self.current_index) {
             true
         } else {
             false

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::collections::HashMap;
@@ -54,7 +56,7 @@ fn build_bst(array: &Vec<Option<i32>>, index: usize) -> Option<Rc<RefCell<TreeNo
 }
 
 fn fibonacci(n: i32) -> i32 {
-    let mut cache: Rc<RefCell<Vec<i32>>> = Rc::new(RefCell::new(vec![0, 1]));
+    let cache: Rc<RefCell<Vec<i32>>> = Rc::new(RefCell::new(vec![0, 1]));
 
     fn recurse(n: i32, cache: Rc<RefCell<Vec<i32>>>) -> i32 {
         if n < 2 {
@@ -71,7 +73,7 @@ fn fibonacci(n: i32) -> i32 {
 }
 
 fn climb_stairs(n: i32) -> i32 {
-    let mut cache: Rc<RefCell<HashMap<usize, i32>>> = Rc::new(RefCell::new(HashMap::new()));
+    let cache: Rc<RefCell<HashMap<usize, i32>>> = Rc::new(RefCell::new(HashMap::new()));
     fn recurse(step: usize, n:i32, cache: Rc<RefCell<HashMap<usize, i32>>>) -> i32 {
         if step as i32 > n {
             return 0;
@@ -115,7 +117,7 @@ fn my_pow(x: f64, n: i32) -> f64 {
             half * half * x
         }
     }
-    let mut product = fast_pow(x, n.abs());
+    let product = fast_pow(x, n.abs());
     if n < 0 {
         1 as f64 / product
     } else {
@@ -158,7 +160,7 @@ fn merge_two_lists(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Opti
 //     rows[n as usize - 1][k as usize - 1]
 // }
 
-pub fn kth_grammar(n: i32, k: i32) -> i32 {
+pub fn kth_grammar(_n: i32, k: i32) -> i32 {
     let k_minus_one = k - 1;
     (k_minus_one.count_ones() % 2) as i32
 }
@@ -213,7 +215,7 @@ fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
                 for right in &right_subtrees {
                     let left_child = if let Some(node) = left { Some(Rc::clone(&node)) } else {None};
                     let right_child = if let Some(node) = right { Some(Rc::clone(&node)) } else {None};
-                    let mut new_tree = Some(Rc::new(RefCell::new(TreeNode {
+                    let new_tree = Some(Rc::new(RefCell::new(TreeNode {
                         val: i,
                         left: left_child,
                         right: right_child,

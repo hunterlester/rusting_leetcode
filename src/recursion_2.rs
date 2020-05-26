@@ -123,37 +123,37 @@ fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
     return false;
 }
 
-fn partition(nums: &mut Vec<i32>, low: i32, high: i32) -> i32 {
-    let pivot_value = nums[high as usize];
-    let mut partition_index = low;
-    for index in low..high {
-        if nums[index as usize] < pivot_value {
-            nums.swap(index as usize, partition_index as usize);
-            partition_index += 1;
-        }
-    }
-    nums.swap(partition_index as usize, high as usize);
-    partition_index
-}
-
 /// Quick sort partition variant
-// fn partition(nums: &mut Vec<i32>, mut low: i32, mut high: i32) -> i32 {
-//     let pivot_index = (low + (high - low)) / 2; // low + high >>> 1
-//     while low <= high {
-//         while nums[low as usize] < nums[pivot_index as usize] {
-//             low += 1;
-//         }
-//         while nums[high as usize] > nums[pivot_index as usize] {
-//             high -= 1;
-//         }
-//         if low <= high {
-//             nums.swap(low as usize, high as usize);
-//             low += 1;
-//             high -= 1;
+// fn partition(nums: &mut Vec<i32>, low: i32, high: i32) -> i32 {
+//     let pivot_value = nums[high as usize];
+//     let mut partition_index = low;
+//     for index in low..high {
+//         if nums[index as usize] < pivot_value {
+//             nums.swap(index as usize, partition_index as usize);
+//             partition_index += 1;
 //         }
 //     }
-//     low
+//     nums.swap(partition_index as usize, high as usize);
+//     partition_index
 // }
+
+fn partition(nums: &mut Vec<i32>, mut low: i32, mut high: i32) -> i32 {
+    let pivot_index = (low + (high - low)) / 2; // low + high >>> 1
+    while low <= high {
+        while nums[low as usize] < nums[pivot_index as usize] {
+            low += 1;
+        }
+        while nums[high as usize] > nums[pivot_index as usize] {
+            high -= 1;
+        }
+        if low <= high {
+            nums.swap(low as usize, high as usize);
+            low += 1;
+            high -= 1;
+        }
+    }
+    low
+}
 
 fn quick_sort_helper(mut nums: &mut Vec<i32>, low: i32, high: i32) {
     if low < high {
